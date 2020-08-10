@@ -120,13 +120,15 @@ states.insert(0, 'U.S.')
 num_states = len(states)
 
 cases_dates = list(df_cases.columns)[11:]
-
+deaths_dates = list(df_deaths.columns)[12:]
 
 from datetime import datetime
 dates_c = []
 for i in cases_dates:
     dates_c.append(datetime.strptime(i, '%m/%d/%y').strftime('%m/%d/%Y'))
-
+dates_d = []
+for i in deaths_dates:
+    dates_d.append(datetime.strptime(i, '%m/%d/%y').strftime('%m/%d/%Y'))
 
 #  Compute partitions and ranges for the parallel agents to divide and conquer!
 
@@ -178,12 +180,7 @@ cases_states = []
 for input,job in jobs:
     cases_states = cases_states + job()
 
-# Compute the sums per state for the number of deaths
-dates_d = []
-for i in list(df_deaths.columns)[12:]:
-    dates_d.append(datetime.strptime(i, '%m/%d/%y').strftime('%m/%d/%Y'))
-
-jobs = [(input, job_server.submit(update_sums,(input,cases_dates,df_deaths,rows_deaths), (), ("pandas",))) for input in tuple(row_partition)]
+jobs = [(input, job_server.submit(update_sums,(input,deaths_dates,df_deaths,rows_deaths), (), ("pandas",))) for input in tuple(row_partition)]
 deaths_states = []
 for input,job in jobs:
     deaths_states = deaths_states + job()
@@ -232,7 +229,8 @@ future_forecast_c = np.array([float(x) for x in range(col_len_c + days_ahead_c)]
 
 days_ahead_d = 14
 start_d = dates_d[-1]
-start_date_d = datetime.strptime(start_d, '%m/%d/%Y')
+start_date_d = datetime.strptime(
+    start_d, '%m/%d/%Y')
 for i in range(days_ahead_d):
     dates_d.append((start_date_d + timedelta(days=i + 1)).strftime('%m/%d/%Y'))
 future_forecast_d = np.array([float(x) for x in range(col_len_d + days_ahead_d)])
