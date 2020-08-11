@@ -1,5 +1,5 @@
 '''
- Filename: WGLS-COVID-19-v7.py
+ Filename: WGLS for COVID-19 WIN v1.py
 
  Purpose: Create CSV files and plots by states in U.S. with historical and forecast for both cases and
  deaths of COVID-19. In particular, this code demonstrates the use of extend_the_curve()
