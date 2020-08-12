@@ -2,7 +2,7 @@
  Filename: WGLS for COVID-19 WIN v1.py
 
  Purpose: Create CSV files and plots by states in U.S. with historical and forecast for both cases and
- deaths of COVID-19. In particular, this code demonstrates the use of extend_the_curve()
+ deaths of COVID-19. In particular, this code demonstrates the use of lsextend()
 
 (C) COPYRIGHT NOTICE
 
@@ -239,7 +239,7 @@ future_forecast_d = np.array([float(x) for x in range(col_len_d + days_ahead_d)]
 Returns mode and the difference between mode and next most frequently occurring value 
 '''
 
-from extend_the_curve import extend_the_curve
+from lsextend import lsextend
 
 def make_forecast(pair,df,days_ahead):
     # Model forecasting
@@ -248,16 +248,16 @@ def make_forecast(pair,df,days_ahead):
     block = df.iloc[ pair[0]:pair[1], :].to_numpy()
 
     import numpy as np
-    return np.row_stack(np.asarray([extend_the_curve(row,days_ahead,returns="step") for row in block]))
+    return np.row_stack(np.asarray([lsextend(row, days_ahead, returns="step") for row in block]))
 
-jobs = [(input, job_server.submit(make_forecast,(input,dfc,days_ahead_c), (extend_the_curve,), ("numpy","pandas","sklearn.linear_model","scipy","re"))) for input in tuple(row_ranges)]
+jobs = [(input, job_server.submit(make_forecast, (input,dfc,days_ahead_c), (lsextend,), ("numpy", "pandas", "sklearn.linear_model", "scipy", "re"))) for input in tuple(row_ranges)]
 cases_forecast = np.row_stack([job() for input, job in jobs])
 
 dfc = pd.DataFrame(np.concatenate((dfc.values,cases_forecast),axis=1), columns=dates_c, index=dfc.axes[0].to_list())
 
 # model forecasting for number of deaths
 
-jobs = [(input, job_server.submit(make_forecast,(input,dfd,days_ahead_d), (extend_the_curve,), ("numpy","pandas","sklearn.linear_model","scipy","re"))) for input in tuple(row_ranges)]
+jobs = [(input, job_server.submit(make_forecast, (input,dfd,days_ahead_d), (lsextend,), ("numpy", "pandas", "sklearn.linear_model", "scipy", "re"))) for input in tuple(row_ranges)]
 deaths_forecast = np.row_stack([job() for input, job in jobs])
 
 dfd = pd.DataFrame(np.concatenate((dfd.values,deaths_forecast),axis=1), columns=dates_d, index=dfd.axes[0].to_list())
