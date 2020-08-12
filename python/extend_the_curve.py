@@ -1,5 +1,5 @@
 '''
- Filename: lsextend.py
+ Filename: extend_the_curve.py
  Purpose: Provide the functionality of extend_the_curve() as follows:
 
  Inputs:
