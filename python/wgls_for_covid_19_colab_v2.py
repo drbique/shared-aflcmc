@@ -244,16 +244,16 @@ future_forecast_d = np.array([float(x) for x in range(col_len_d + days_ahead_d)]
  extend_the_curve
 """
 
-!pip install git+https://github.com/drbique/extend_the_curve.git#egg=lsextend
+!pip install git+https://github.com/drbique/extend_the_curve.git#egg=ExtendTheCurve
 
 def make_forecast_c(blocks):
     import numpy as np
-    from lsextend import extend_the_curve as ec
+    from extend_the_curve import extend_the_curve as ec
     return np.row_stack(np.asarray([ec.extend_the_curve(row,days_ahead_c,returns="step") for row in blocks]))
 
 def make_forecast_d(blocks):
     import numpy as np
-    from lsextend import extend_the_curve as ec
+    from extend_the_curve import extend_the_curve as ec
     return np.row_stack(np.asarray([ec.extend_the_curve(row,days_ahead_d,returns="step") for row in blocks]))
 
 blocks_c = [df_c.iloc[ pair[0]:pair[1], :].to_numpy() for pair in row_ranges]
